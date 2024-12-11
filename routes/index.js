@@ -4,7 +4,12 @@ const router = express.Router(); // обєкт для роботи маршру�
 const multer = require("multer"); //це бібліотека, яка допомагає приймати файли, що завантажуються клієнтом через HTTP-запит (наприклад, через форму на веб-сторінці).
 const UserController = require("../controllers/user-controller");
 const authenticateToken = require("../middleware/auth");
-const { PostController, CommentController, LikeController, FollowController } = require("../controllers");
+const {
+  PostController,
+  CommentController,
+  LikeController,
+  FollowController,
+} = require("../controllers");
 
 const uploadDestination = "uploads";
 // показуємо  де зберігати файли
@@ -34,14 +39,18 @@ router.delete("/posts/:id", authenticateToken, PostController.deletePost);
 // router comments
 
 router.post("/comments", authenticateToken, CommentController.createComment);
-router.delete("/comments/:id", authenticateToken, CommentController.deleteComment);
+router.delete(
+  "/comments/:id",
+  authenticateToken,
+  CommentController.deleteComment
+);
 
 // like router
 
-router.post('/likes', authenticateToken, LikeController.likePost);
-router.delete('/likes/:id', authenticateToken, LikeController.unlikePost);
+router.post("/likes", authenticateToken, LikeController.likePost);
+router.delete("/likes/:id", authenticateToken, LikeController.unlikePost);
 
 // follow router
-router.post('/follow', authenticateToken, FollowController.followUser);
-router.delete('/unfollow', authenticateToken, FollowController.unFollowUser);
+router.post("/follow", authenticateToken, FollowController.followUser);
+router.delete("/unfollow", authenticateToken, FollowController.unFollowUser);
 module.exports = router;

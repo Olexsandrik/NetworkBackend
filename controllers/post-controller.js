@@ -28,7 +28,7 @@ const PostController = {
     try {
       const posts = await prisma.post.findMany({
         include: {
-          Likes: true,
+          likes: true,
           author: true,
           comments: true,
         },
@@ -39,7 +39,7 @@ const PostController = {
 
       const postWithLikeInfo = posts.map((post) => ({
         ...post,
-        likedByUser: post.Likes.some((like) => like.userId === userId),
+        likedByUser: post.likes.some((like) => like.userId === userId),
       }));
 
       res.json(postWithLikeInfo);
@@ -62,7 +62,7 @@ const PostController = {
               user: true,
             },
           },
-          Likes: true,
+          likes: true,
           author: true,
         }, // Include related posts
       });
@@ -73,9 +73,9 @@ const PostController = {
 
       const postWithLikeInfo = {
         ...post,
-        likedByUser: post.Likes.some((like) => like.userId === userId),
+        likedByUser: post.likes.some((like) => like.userId === userId),
       };
-    
+
       res.json(postWithLikeInfo);
     } catch (error) {
       res.status(500).json({ error: "помилка поста" });
