@@ -21,15 +21,18 @@ const storage = multer.diskStorage({
   },
 });
 
-
-
 const uploads = multer({ storage: storage }); //
 // route user
 router.post("/register", UserController.register);
 router.post("/login", UserController.login);
 router.get("/current", authenticateToken, UserController.current);
 router.get("/users/:id", authenticateToken, UserController.getUserById);
-router.put("/users/:id", authenticateToken, UserController.updateUser);
+router.put(
+  "/users/:id",
+  authenticateToken,
+  uploads.single("avatar"),
+  UserController.updateUser
+);
 
 // routes posts
 
@@ -54,5 +57,9 @@ router.delete("/likes/:id", authenticateToken, LikeController.unlikePost);
 
 // follow router
 router.post("/follow", authenticateToken, FollowController.followUser);
-router.delete("/unfollow", authenticateToken, FollowController.unFollowUser);
+router.delete(
+  "/unfollow/:id",
+  authenticateToken,
+  FollowController.unFollowUser
+);
 module.exports = router;

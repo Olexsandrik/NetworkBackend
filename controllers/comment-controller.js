@@ -34,11 +34,11 @@ const CommentController = {
       if (!comment) {
         return res.status(404).json({ error: "комента немає" });
       }
-      if (comment.userId != userId) {
+      if (comment.userId !== userId) {
         return res.status(403).json({ error: "немає доступа" });
       }
 
-      await prisma.comment.delete({ where: {id } });
+      await prisma.comment.delete({ where: { id } });
       res.json(comment);
     } catch (error) {
       console.error("error delete comment", error);
