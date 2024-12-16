@@ -1,12 +1,12 @@
-ARG MONGO_VERSION=5.0
-FROM mongo:${MONGO_VERSION}
+FROM mongo:4
 
-
-# we take over the default & start mongo in replica set mode in a background task
-ENTRYPOINT mongod --port $MONGO_REPLICA_PORT --replSet rs0 --bind_ip 0.0.0.0 & MONGOD_PID=$!; \
-# we prepare the replica set with a single node and prepare the root user config
+# Запускаємо MongoDB у фоні
+ENTRYPOINT mongod --port $MONGO_REPLICA_PORT --replSet rs0 --bind_ip_all & MONGOD_PID=$!; \
+# Ініціалізація реплікаційного набору
 INIT_REPL_CMD="rs.initiate({ _id: 'rs0', members: [{ _id: 0, host: '$MONGO_REPLICA_HOST:$MONGO_REPLICA_PORT' }] })"; \
-# we wait for the replica set to be ready and then submit the command just above
-until ($MONGO_COMMAND mongo --port $MONGO_REPLICA_PORT --eval "$INIT_REPL_CMD"); do sleep 1; done; \
-# we are done but we keep the container by waiting on signals from the mongo task
+# Створення root-користувача
+INIT_USER_CMD="db.getSiblingDB('admin').createUser({ user: '$MONGO_INITDB_ROOT_USERNAME', pwd: '$MONGO_INITDB_ROOT_PASSWORD', roles: [{ role: 'root', db: 'admin' }] })"; \
+# Очікуємо готовності сервера і виконуємо ініціалізацію
+until mongo admin --port $MONGO_REPLICA_PORT --eval "$INIT_REPL_CMD" && mongo admin --port $MONGO_REPLICA_PORT --eval "$INIT_USER_CMD"; do sleep 1; done; \
+# Залишаємо процес MongoDB активним
 echo "REPLICA SET ONLINE"; wait $MONGOD_PID;

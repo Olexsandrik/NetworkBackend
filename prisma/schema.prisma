@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -36,14 +37,12 @@ model Follows {
 model Post {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
   content   String
-  authorId  String  @db.ObjectId
-  author   User    @relation(fields: [authorId], references: [id])
+  author    User      @relation(fields: [authorId], references: [id])
+  authorId  String    @db.ObjectId
   likes     Like[]
   comments  Comment[]
   createdAt DateTime  @default(now())
 }
-
-
 
 model Like {
   id     String @id @default(auto()) @map("_id") @db.ObjectId
